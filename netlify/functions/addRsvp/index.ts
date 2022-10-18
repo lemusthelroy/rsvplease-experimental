@@ -19,8 +19,6 @@ const handler: Handler = async function (event, context) {
   // Store RSVP in Database
   const party = storeRsvp(requestBody.inviteId, requestBody.invitee);
 
-  // TODO - Email confirmation of RSVP to invitee
-  // TODO - Email confirmation of RSVP to host
   const response = await fetch(
     `${process.env.URL}/.netlify/functions/emails/confirm`,
     {
