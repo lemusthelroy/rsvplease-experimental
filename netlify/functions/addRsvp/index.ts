@@ -1,5 +1,6 @@
 import { Handler } from "@netlify/functions";
 import storeRsvp from "./storeRsvp";
+import fetch from "node-fetch";
 
 const handler: Handler = async function (event, context) {
   if (event.body === null) {
@@ -20,9 +21,26 @@ const handler: Handler = async function (event, context) {
 
   // TODO - Email confirmation of RSVP to invitee
   // TODO - Email confirmation of RSVP to host
+  const response = await fetch(
+    `${process.env.URL}/.netlify/functions/emails/confirm`,
+    {
+      headers: {
+        "netlify-emails-secret": process.env.NETLIFY_EMAILS_SECRET as string,
+      },
+      method: "POST",
+      body: JSON.stringify({
+        from: "lewis@reflr.io",
+        to: party.hostEmail,
+        subject: "Someone is coming to your party",
+        parameters: {
+          name: requestBody.invitee,
+        },
+      }),
+    }
+  );
 
   return {
-    statusCode: 200,
+    statusCode: response.status,
     body: JSON.stringify("RSVP stored"),
   };
 };
