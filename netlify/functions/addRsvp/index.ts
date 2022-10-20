@@ -19,44 +19,10 @@ const handler: Handler = async function (event, context) {
   // Store RSVP in Database
   const party = storeRsvp(requestBody.inviteId, requestBody.invitee);
 
-  const response1 = await fetch(
-    `${process.env.URL}/.netlify/functions/emails/confirm`,
-    {
-      headers: {
-        "netlify-emails-secret": process.env.NETLIFY_EMAILS_SECRET as string,
-      },
-      method: "POST",
-      body: JSON.stringify({
-        from: "lewis@reflr.io",
-        to: party.hostEmail,
-        subject: "Someone is coming to your party",
-        parameters: {
-          name: requestBody.invitee,
-        },
-      }),
-    }
-  );
-
-  const response2 = await fetch(
-    `${process.env.URL}/.netlify/functions/emails/confirm-attendance`,
-    {
-      headers: {
-        "netlify-emails-secret": process.env.NETLIFY_EMAILS_SECRET as string,
-      },
-      method: "POST",
-      body: JSON.stringify({
-        from: "lewis@reflr.io",
-        to: requestBody.inviteeEmail,
-        subject: "You have RSVP'd",
-        parameters: {
-          name: requestBody.invitee,
-        },
-      }),
-    }
-  );
+  // TODO - Send Invite
 
   return {
-    statusCode: response1.status && response2.status === 200 ? 200 : 500,
+    statusCode: 200,
     body: JSON.stringify("RSVP stored"),
   };
 };
